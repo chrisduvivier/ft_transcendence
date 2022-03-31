@@ -3,3 +3,4 @@
 
 - Started with the offcial docs of nestJS: https://docs.nestjs.com/first-steps
 
+- docker-compose tutorial with NestJS + postgresql: [here](https://thanhpolimi.com/docker-compose-for-nestjs-project-5ee7644e8aa2)
