@@ -22,18 +22,20 @@ import { UserController } from './user/controller/user.controller';
       autoLoadEntities: true,
       synchronize: true     //don't do it in production or you'll lose data
     }), 
-    ServeStaticModule.forRoot({
-      /**
-       * Static files root directory. Default: "client"
-       */
-      rootPath: join(__dirname, '..', 'client'),
-      /**
-       * Paths to exclude when serving the static app. WARNING! Not supported by `fastify`. If you use `fastify`, you can exclude routes using regexp (set the `renderPath` to a regular expression) instead.
-       */
-      // exclude: ['/api*'], 
-    }), AuthModule, UserModule,
+    // ServeStaticModule.forRoot({
+    //   /**
+    //    * Static files root directory. Default: "client"
+    //    */
+    //   rootPath: join(__dirname, '..', 'client'),
+    //   /**
+    //    * Paths to exclude when serving the static app. WARNING! Not supported by `fastify`. If you use `fastify`, you can exclude routes using regexp (set the `renderPath` to a regular expression) instead.
+    //    */
+    //   // exclude: ['/api*'], 
+    // }), 
+    // AuthModule, 
+    UserModule,
   ],
-  controllers: [AppController, UserController],
+  controllers: [AppController],
   providers: [AppService],
 })
 export class AppModule {}
