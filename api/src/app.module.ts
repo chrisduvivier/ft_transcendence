@@ -6,7 +6,8 @@ import { join } from 'path';
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
 import { AuthModule } from './auth/auth.module';
-import { UsersModule } from './users/users.module';
+import { UserModule } from './user/user.module';
+import { UserController } from './user/controller/user.controller';
 
 @Module({
   imports: [
@@ -30,9 +31,9 @@ import { UsersModule } from './users/users.module';
        * Paths to exclude when serving the static app. WARNING! Not supported by `fastify`. If you use `fastify`, you can exclude routes using regexp (set the `renderPath` to a regular expression) instead.
        */
       // exclude: ['/api*'], 
-    }), AuthModule, UsersModule,
+    }), AuthModule, UserModule,
   ],
-  controllers: [AppController],
+  controllers: [AppController, UserController],
   providers: [AppService],
 })
 export class AppModule {}
