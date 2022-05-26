@@ -3,6 +3,7 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { IPaginationOptions, paginate, Pagination } from 'nestjs-typeorm-paginate';
 import { from, Observable } from 'rxjs';
 import { map, switchMap } from 'rxjs/operators';
+import { AuthService } from 'src/auth/service/auth.service';
 import { UserEntity } from 'src/user/model/user.entity';
 import { UserI } from 'src/user/model/user.interface';
 import { Repository } from 'typeorm';
@@ -13,7 +14,8 @@ const bcrypt = require('bcrypt');
 export class UserService {
 	constructor(
 		@InjectRepository(UserEntity)
-		private readonly userRepository: Repository<UserEntity>
+		private readonly userRepository: Repository<UserEntity>,
+		private readonly authService: AuthService
 	) {}
 
 	create(newUser: UserI): Observable<UserI> {
@@ -36,15 +38,16 @@ export class UserService {
 		)
 	}
 
-	// Refactor to use JWT in future
-	login(user: UserI): Observable<boolean> {
+	login(user: UserI): Observable<string> {
 		return this.findByEmail(user.email).pipe(
 			switchMap((foundUser: UserI) => {
 				if (foundUser) {
 					return this.validatePassword(user.password, foundUser.password).pipe(
 						switchMap((res: boolean) => {
 							if (res) {
-								return this.findOne(foundUser.id).pipe(map(() => true));
+								return this.findOne(foundUser.id).pipe(
+									switchMap((payload: UserI) => this.authService.generateJwt(payload))
+								)
 							} else {
 								throw new HttpException('Login was not successfull, wrong credentials', HttpStatus.UNAUTHORIZED);
 							}
@@ -62,11 +65,11 @@ export class UserService {
 	}
 
 	private hashPassword(password: string): Observable<string> {
-		return from<string>(bcrypt.hash(password, 12));
+		return this.authService.hashPassword(password);
 	}
 
 	private validatePassword(password: string, storedPassword: string): Observable<any> {
-		return from(bcrypt.compare(password, storedPassword));
+		return this.authService.comparePassword(password, storedPassword);
 	}
 
 	private findOne(id: number): Observable<UserI> {
