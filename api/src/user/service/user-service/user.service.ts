@@ -76,6 +76,21 @@ export class UserService {
 		return from(this.userRepository.findOne({ id }));
 	}
 
+	/* TODO: prevent user creation process when the username(unique) already exists, right now we only check the email 
+		and calling with existing username crash server
+	*/
+	// private userExists(newUser: UserI): Observable<boolean> {
+	// 	return from(this.userRepository.findOne({newUserusername})).pipe(
+	// 		map((user: UserI) => {
+	// 			if (user) { 
+	// 				return true;
+	// 			} else {
+	// 				return false;
+	// 			}
+	// 		})
+	// 	)
+	// }
+
 	private mailExists(email: string): Observable<boolean> {
 		return from(this.userRepository.findOne({email})).pipe(
 			map((user: UserI) => {
