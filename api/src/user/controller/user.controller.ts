@@ -23,7 +23,7 @@ export class UserController {
 		)
 	}
 
-	@UseGuards(JwtAuthGuard)
+	@UseGuards(JwtAuthGuard)	// requires valid JWT token
 	@Get()
 	findAll(
 		@Query('page') page: number = 1,
@@ -34,7 +34,7 @@ export class UserController {
 	}
 
 	@Post('login')
-	login(@Body() loginUserDto: LoginUserDto ): Observable<LoginResponseI> {
+	login(@Body() loginUserDto: LoginUserDto): Observable<LoginResponseI> {
 		return this.userHelperService.loginUserDtoToEntity(loginUserDto).pipe(
 			switchMap((user: UserI) => this.userService.login(user).pipe(
 				map((jwt: string) => {
