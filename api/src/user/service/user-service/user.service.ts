@@ -76,6 +76,10 @@ export class UserService {
 		return from(this.userRepository.findOne({ id }));
 	}
 
+	public getOne(id: number): Promise<UserI> {
+		return this.userRepository.findOneOrFail({ id });
+	}
+
 	/* TODO: prevent user creation process when the username(unique) already exists, right now we only check the email 
 		and calling with existing username crash server
 	*/
