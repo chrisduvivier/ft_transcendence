@@ -6,6 +6,7 @@ import { AppComponent } from './app.component';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { MatSnackBarModule } from '@angular/material/snack-bar';
 import { JwtModule } from '@auth0/angular-jwt';
+import { SocketIoConfig, SocketIoModule } from 'ngx-socket-io';
 
 export function tokenGetter() {
   return localStorage.getItem("nestjs_chat_app");
@@ -24,8 +25,8 @@ export function tokenGetter() {
     JwtModule.forRoot({
       config: {
         tokenGetter: tokenGetter,
-        allowedDomains: ["example.com"],
-        disallowedRoutes: ["http://example.com/examplebadroute/"],
+        allowedDomains: ["http://localhost:3000"],
+        // disallowedRoutes: ["http://example.com/examplebadroute/"],
       },
     }),
   ],
