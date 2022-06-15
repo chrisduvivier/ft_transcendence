@@ -24,16 +24,11 @@ export class ChatService {
     return this.socket.fromEvent<RoomPaginatedI>('rooms')
   }
 
+  emitPaginateRooms(limit: number, page: number) {
+    this.socket.emit('paginateRooms', {limit, page}); //correspond to api's chatgateway (@SubscribeMessage)
+  }
+
   createRoom() {
-    const user2: UserI = {
-      id: 3
-    };
-
-    const room: RoomI = {
-      name: "Testroom",
-      users: [user2] 
-    }
-
-    this.socket.emit('createRoom', room);
+    // this.socket.emit('createRoom', room);
   }
 }
