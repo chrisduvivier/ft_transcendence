@@ -13,11 +13,11 @@
             </mat-list-option>
           </mat-selection-list>
           <mat-paginator
-          [length]="(rooms$ | async)?.meta?.totalItems"
-          [pageIndex]="(rooms$ | async)?.meta?.currentPage"
-          [pageSize]="(rooms$ | async)?.meta?.itemCount"
-          (page)="onPaginateRooms($event)"
-          [pageSizeOptions]="[10,25,50]"
+            [length]="(rooms$ | async)?.meta?.totalItems"
+            [pageIndex]="(rooms$ | async)?.meta?.currentPage"
+            [pageSize]="(rooms$ | async)?.meta?.itemCount"
+            (page)="onPaginateRooms($event)"
+            [pageSizeOptions]="[10,25,50]"
           ></mat-paginator>
         </span>
       </div>

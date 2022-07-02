@@ -22,7 +22,7 @@ export class AuthService {
     return bcrypt.compare(password, storedPassword);
   }
 
-  verifyJwt(jwt: string): Promise<any> {
+  async verifyJwt(jwt: string): Promise<any> {
     return this.jwtService.verifyAsync(jwt);
   }
 }
