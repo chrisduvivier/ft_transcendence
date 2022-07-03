@@ -25,4 +25,11 @@ export class ConnectedUserService {
     async deleteBySocketId(socketId: string){
         return this.connectedUserRepository.delete({socketId: socketId});
     }
+
+    async deleteAll() {
+        await this.connectedUserRepository
+        .createQueryBuilder()
+        .delete()
+        .execute();
+    }
 }
