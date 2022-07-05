@@ -4,6 +4,7 @@ import { Socket } from 'ngx-socket-io';
 import { map, Observable } from 'rxjs';
 import { RoomI, RoomPaginatedI } from 'src/app/model/room.interface';
 import { UserI } from 'src/app/model/user.interface';
+import { MessageI, messagePaginateI } from 'src/app/model/message.interface';
 import { CustomSocket } from '../../sockets/custom-socket';
 
 @Injectable({
@@ -13,12 +14,20 @@ export class ChatService {
 
   constructor(private socket: CustomSocket, private snackbar: MatSnackBar) { }
 
-  sendMessage(msg: string) {
-    this.socket.emit('message', msg);
+  sendMessage(message: MessageI) {
+    this.socket.emit('addMessage', message);
   }
 
-  getMessage() {
-    return this.socket.fromEvent('message');
+  joinRoom(room: RoomI) {
+    this.socket.emit('joinRoom', room);
+  }
+
+  leaveRoom(room: RoomI) {
+    this.socket.emit('leaveRoom', room);
+  }
+
+  getMessages(): Observable<messagePaginateI> {
+    return this.socket.fromEvent<messagePaginateI>('messages');
   }
 
   getMyRooms(): Observable<RoomPaginatedI> {
