@@ -1,3 +1,8 @@
-<p>
-  <em>{{message.user.username}}</em> <br/> {{message.text}}
-</p>
+<!-- Using `ngClass`, we add stylying to the html block if the message belongs to loggedInUser (myself) -->
+<span style="display: flex;" [ngClass]="{ownContainer: user.id == message.user.id}">
+
+  <p [ngClass]="{ownMessage: user.id == message.user.id}">
+    <em>{{message.user.username}}</em> <br/> {{message.text}}
+  </p>
+
+</span>
