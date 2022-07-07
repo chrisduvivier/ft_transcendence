@@ -18,16 +18,21 @@ export class ChatService {
     this.socket.emit('addMessage', message);
   }
 
+  
   joinRoom(room: RoomI) {
     this.socket.emit('joinRoom', room);
   }
-
+  
   leaveRoom(room: RoomI) {
     this.socket.emit('leaveRoom', room);
   }
-
+  
   getMessages(): Observable<messagePaginateI> {
     return this.socket.fromEvent<messagePaginateI>('messages');
+  }
+  
+  getAddedMessage(): Observable<MessageI> {
+    return this.socket.fromEvent<MessageI>('messageAdded');
   }
 
   getMyRooms(): Observable<RoomPaginatedI> {
