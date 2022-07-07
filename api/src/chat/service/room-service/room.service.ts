@@ -17,7 +17,7 @@ export class RoomService {
 	async createRoom(room: RoomI, creator: UserI): Promise<RoomI> {
 		const newRoom = await this.addCreatorToRoom(room, creator);
 		//set default value for now
-		newRoom.password = 'password'
+		newRoom.password = ''
 		return this.roomRepository.save(newRoom);
 	}
 
@@ -33,13 +33,15 @@ export class RoomService {
 		.leftJoin('room.users', 'user')	//many to many relationship
 		.where('user.id = :userId', {userId})
 		.leftJoinAndSelect('room.users', 'all_users')
-		.orderBy('room.updated_at', 'DESC')
+		.orderBy('room.updatedAt', 'DESC')
 
 		return paginate(query, options);
 	  }
 
 	async addCreatorToRoom(room: RoomI, creator: UserI): Promise<RoomI> {
 		room.users.push(creator);
+		room.createdBy = creator;
+		room.adminUsers.push(creator);
 		return room;
 	}
 }

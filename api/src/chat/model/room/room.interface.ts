@@ -4,8 +4,11 @@ export interface RoomI {
     id?: number;
     name?: string;
     description?: string;
+    type?: string;
     password?: string;
+    adminUsers?: UserI[];
     users?: UserI[];
-    created_at?: Date;
-    updated_at?: Date;
+    createdAt?: Date;
+    updatedAt?: Date;
+    createdBy?: UserI;
 }

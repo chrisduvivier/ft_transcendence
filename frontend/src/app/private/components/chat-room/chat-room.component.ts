@@ -26,7 +26,7 @@ export class ChatRoomComponent implements OnChanges, OnDestroy {
         !messagePaginate.items.some(m => m.id === message.id)) {  // check if message already existing
         messagePaginate.items.push(message);
       }
-      const items = messagePaginate.items.sort((a, b) => new Date(a.created_at).getTime() - new Date(b.created_at).getTime());
+      const items = messagePaginate.items.sort((a, b) => new Date(a.createdAt).getTime() - new Date(b.createdAt).getTime());
       messagePaginate.items = items;
       return messagePaginate;
     }),

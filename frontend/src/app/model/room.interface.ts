@@ -7,8 +7,8 @@ export interface RoomI {
     description?: string;
     password?: string;
     users?: UserI[];
-    created_at?: Date;
-    updated_at?: Date;
+    createdAt?: Date;
+    updatedAt?: Date;
 }
 
 export interface RoomPaginatedI {

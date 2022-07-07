@@ -20,8 +20,8 @@ export class MessageEntity {
     room: RoomEntity;
 
     @CreateDateColumn()
-    created_at: Date;
+    createdAt: Date;
     
     @UpdateDateColumn()
-    updated_at: Date;
+    updatedAt: Date;
 }

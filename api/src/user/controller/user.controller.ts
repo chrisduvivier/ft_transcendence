@@ -24,7 +24,7 @@ export class UserController {
 	async findAll(
 		@Query('page') page: number = 1,
 		@Query('limit') limit: number = 10
-	): Promise<Pagination<UserI>> {
+): Promise<Pagination<UserI>> {
 		limit = limit > 100 ? 100 : limit;	 //set upper limit if more than 10
 		return this.userService.findAll({page, limit, route: 'http://localhost:3000/api/users'})
 	}
@@ -40,9 +40,9 @@ export class UserController {
 		const user: UserI = this.userHelperService.loginUserDtoToEntity(loginUserDto);
 		const jwt: string = await this.userService.login(user);
 		return {
-			access_token: jwt,
-			token_type: 'JWT',
-			expires_in: 10000
+			accessToken: jwt,
+			tokenType: 'JWT',
+			expiresIn: 10000
 		};
 	}
 }

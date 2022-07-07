@@ -7,8 +7,8 @@ export interface MessageI {
     text: string;
     user?: UserI;
     room: RoomI;
-    created_at?: Date;
-    updated_at?: Date;
+    createdAt?: Date;
+    updatedAt?: Date;
 }
 
 export interface messagePaginateI {
