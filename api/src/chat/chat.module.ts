@@ -11,6 +11,7 @@ import { MessageEntity } from './model/message/message.entity';
 import { JoinedRoomEntity } from './model/joined-room/joined-room.entity';
 import { JoinedRoomService } from './service/joined-room/joined-room.service';
 import { MessageService } from './service/message/message.service';
+import { PrismaModule } from 'src/prisma/prisma.module';
 
 @Module({
   imports: [
@@ -22,6 +23,7 @@ import { MessageService } from './service/message/message.service';
       MessageEntity,
       JoinedRoomEntity,
     ]),
+    PrismaModule,
   ],
   providers: [ChatGateway, RoomService, ConnectedUserService, JoinedRoomService, MessageService],
 })

@@ -1,0 +1,110 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model ConnectedUser {
+  id          Int          @id(map: "PK_a903379d19b275c008fa625f0fa") @default(autoincrement())
+  socketId    String       @db.VarChar
+  userId      Int?
+  user_entity User? @relation(fields: [userId], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "FK_a2cac4ca8aafbecb41901b07edb")
+  
+  @@map("connected_user_entity")
+}
+
+model JoinedRoom {
+  id          Int          @id(map: "PK_f6b907c2a92c9283d62a386a7a1") @default(autoincrement())
+  socketId    String       @db.VarChar
+  userId      Int?
+  roomId      Int?
+  room_entity Room? @relation(fields: [roomId], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "FK_6b9c0d66794a55af236aa5d857a")
+  user_entity User? @relation(fields: [userId], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "FK_5b50b132bef2e7c0316eb51ae24")
+
+  @@map("joined_room_entity")
+}
+
+model Message {
+  id          Int          @id(map: "PK_45bb3707fbb99a73e831fee41e0") @default(autoincrement())
+  text        String       @db.VarChar
+  userId      Int?
+  roomId      Int?
+  createdAt   DateTime     @default(now()) @db.Timestamp(6)
+  updatedAt   DateTime     @default(now()) @db.Timestamp(6)
+  room_entity Room? @relation(fields: [roomId], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "FK_de6dd7c5c37f0d852b6ba9d98bd")
+  user_entity User? @relation(fields: [userId], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "FK_577902780af0407f6dc26aef28b")
+
+  @@map("message_entity")
+}
+
+model Room {
+  id                                  Int                                   @id(map: "PK_fc9fe8e7b09bbbeea55ba770e1a") @default(autoincrement())
+  name                                String                                @db.VarChar
+  description                         String?                               @db.VarChar
+  password                            String                                @db.VarChar
+  type                                String                                @default("public") @db.VarChar
+  createdAt                           DateTime                              @default(now()) @db.Timestamp(6)
+  updatedAt                           DateTime                              @default(now()) @db.Timestamp(6)
+  createdById                         Int?
+  user_entity                         User?                          @relation(fields: [createdById], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "FK_3a492cb17351d5a6bdaf274c10e")
+  joined_room_entity                  JoinedRoom[]
+  message_entity                      Message[]
+  room_entity_admin_users_user_entity room_entity_admin_users_user_entity[]
+  room_entity_users_user_entity       room_entity_users_user_entity[]
+
+  @@map("room_entity")
+}
+
+model room_entity_admin_users_user_entity {
+  roomEntityId Int
+  userEntityId Int
+  room_entity  Room @relation(fields: [roomEntityId], references: [id], onDelete: Cascade, map: "FK_2c1a0135cab8ccf65fe7cbb560a")
+  user_entity  User @relation(fields: [userEntityId], references: [id], onDelete: Cascade, map: "FK_0279320e59d7d27c83528928732")
+
+  @@id([roomEntityId, userEntityId], map: "PK_81a0f8c35e3ab71c0942f67d84b")
+  @@index([userEntityId], map: "IDX_0279320e59d7d27c8352892873")
+  @@index([roomEntityId], map: "IDX_2c1a0135cab8ccf65fe7cbb560")
+}
+
+model room_entity_users_user_entity {
+  roomEntityId Int
+  userEntityId Int
+  room_entity  Room @relation(fields: [roomEntityId], references: [id], onDelete: Cascade, map: "FK_3e813f0fbf642d29c73b1c8e1c4")
+  user_entity  User @relation(fields: [userEntityId], references: [id], onDelete: Cascade, map: "FK_8e186e3949055eb0e8df278337e")
+
+  @@id([roomEntityId, userEntityId], map: "PK_9a71b6e39db119a6e2c11925445")
+  @@index([roomEntityId], map: "IDX_3e813f0fbf642d29c73b1c8e1c")
+  @@index([userEntityId], map: "IDX_8e186e3949055eb0e8df278337")
+  
+  // @@map("room_entity_users_user_entity")
+}
+
+/// The underlying table does not contain a valid unique identifier and can therefore currently not be handled by the Prisma Client.
+model typeorm_metadata {
+  type     String  @db.VarChar
+  database String? @db.VarChar
+  schema   String? @db.VarChar
+  table    String? @db.VarChar
+  name     String? @db.VarChar
+  value    String?
+
+  @@ignore
+}
+
+model User {
+  id                                  Int                                   @id(map: "PK_b54f8ea623b17094db7667d8206") @default(autoincrement())
+  username                            String                                @unique(map: "UQ_9b998bada7cff93fcb953b0c37e") @db.VarChar
+  email                               String                                @unique(map: "UQ_415c35b9b3b6fe45a3b065030f5") @db.VarChar
+  password                            String                                @db.VarChar
+  connected_user                      ConnectedUser[]
+  joined_room_entity                  JoinedRoom[]
+  message_entity                      Message[]
+  room_entity                         Room[]
+  room_entity_admin_users_user_entity room_entity_admin_users_user_entity[]
+  room_entity_users_user_entity       room_entity_users_user_entity[]
+
+  @@map("user_entity")
+}
