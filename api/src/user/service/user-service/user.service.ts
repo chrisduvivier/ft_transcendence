@@ -10,7 +10,6 @@ const bcrypt = require('bcrypt');
 @Injectable()
 export class UserService {
 	constructor(
-
 		private prisma: PrismaService,
 		private readonly authService: AuthService,
 	) {}
@@ -123,21 +122,6 @@ export class UserService {
 		})
 		return user;
 	}
-
-	/* TODO: prevent user creation process when the username(unique) already exists, right now we only check the email 
-		and calling with existing username crash server
-	*/
-	// private userExists(newUser: UserI): Observable<boolean> {
-	// 	return from(this.userRepository.findOne({newUserusername})).pipe(
-	// 		map((user: UserI) => {
-	// 			if (user) { 
-	// 				return true;
-	// 			} else {
-	// 				return false;
-	// 			}
-	// 		})
-	// 	)
-	// }
 
 	private async mailExists(email: string): Promise<boolean> {
 		const user = await this.prisma.user.findUnique({

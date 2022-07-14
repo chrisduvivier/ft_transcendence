@@ -41,6 +41,7 @@ export class RoomService {
 	async addCreatorToRoom(room: RoomI, creator: UserI): Promise<RoomI> {
 		room.users.push(creator);
 		room.createdBy = creator;
+		room.adminUsers = [];
 		room.adminUsers.push(creator);
 		return room;
 	}
