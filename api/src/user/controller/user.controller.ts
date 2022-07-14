@@ -1,6 +1,8 @@
 import { Body, Controller, Get, Post, Query, UseGuards } from '@nestjs/common';
-import { Pagination } from 'nestjs-typeorm-paginate';
+import { User } from '@prisma/client';
+import { PrismaService } from 'src/prisma/prisma.service';
 import { CreateUserDto } from '../model/dto/create-user.dto';
+import { FindAllQueryParams } from '../model/dto/find-all-query-params.dto';
 import { LoginUserDto } from '../model/dto/login-user.dto';
 import { LoginResponseI } from '../model/login-response.interface';
 import { UserI } from '../model/user.interface';
@@ -11,25 +13,22 @@ import { UserService } from '../service/user-service/user.service';
 export class UserController {
 	constructor(
 		private userService: UserService,
-		private userHelperService: UserHelperService
+		private userHelperService: UserHelperService,
+		private prisma: PrismaService,
 	) {}
 
 	@Post()
-	async create(@Body() createUserDto: CreateUserDto ): Promise<UserI> {
+	async create(@Body() createUserDto: CreateUserDto ): Promise<User> {
 		const UserEntity: UserI = this.userHelperService.createUserDtoToEntity(createUserDto);
 		return this.userService.create(UserEntity);
 	}
 
 	@Get()
 	async findAll(
-		@Query('page') page: number = 1,
-		@Query('limit') limit: number = 10,
-): Promise<Pagination<UserI>> {
-	limit = limit > 100 ? 100 : limit;	 //set upper limit if more than 10
-	// typeorm -> prisma aming change
-	const skip: number = page;
-	const take: number = limit;
-		return this.userService.findAll({skip, take, route: 'http://localhost:3000/api/users'})
+		@Query() queryParams: FindAllQueryParams
+	): Promise<User[]> {
+		queryParams.limit = queryParams.limit > 100 ? 100 : queryParams.limit;	 //set upper limit if more than 100
+		return this.userService.findAll(queryParams);
 	}
 
 	@Get('/find-by-username')

@@ -1,12 +1,9 @@
 import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
-import { InjectRepository } from '@nestjs/typeorm';
 import { User } from '@prisma/client';
-import { IPaginationOptions, paginate, Pagination } from 'nestjs-typeorm-paginate';
 import { AuthService } from 'src/auth/service/auth.service';
 import { PrismaService } from 'src/prisma/prisma.service';
-import { UserEntity } from 'src/user/model/user.entity';
+import { FindAllQueryParams } from 'src/user/model/dto/find-all-query-params.dto';
 import { UserI } from 'src/user/model/user.interface';
-import { Like, Repository } from 'typeorm';
 
 const bcrypt = require('bcrypt');
 
@@ -16,9 +13,6 @@ export class UserService {
 
 		private prisma: PrismaService,
 		private readonly authService: AuthService,
-
-		@InjectRepository(UserEntity)
-		private readonly userRepository: Repository<UserEntity>,
 	) {}
 
 	async create(newUser: UserI): Promise<User> {
@@ -36,7 +30,6 @@ export class UserService {
 					}
 				})
 
-				// const user = await this.userRepository.save(this.userRepository.create(newUser));
 				return this.findOne(user.id);
 			} else {
 				throw new HttpException('Email is already in use', HttpStatus.CONFLICT);
@@ -51,8 +44,6 @@ export class UserService {
 
 		try {
 			const foundUser: UserI = await this.findByEmail(user.email.toLowerCase());
-			console.log("foundUser");
-			console.log(foundUser);
 			if (foundUser) {
 				const matches: boolean = await this.validatePassword(user.password, foundUser.password);
 				if (matches) {
@@ -69,8 +60,17 @@ export class UserService {
 		}
 	}
 
-	async 	findAll(options: IPaginationOptions): Promise<Pagination<UserI>> {
-		return paginate<UserEntity>(this.userRepository, options);
+	async 	findAll(params: FindAllQueryParams
+    ): Promise<User[]> {
+		const skip: number = Number(params.page);
+		const take: number = Number(params.limit);
+		return this.prisma.user.findMany({
+			skip,
+			take,
+			orderBy: {
+				id: 'asc'
+			}
+		});
 	}
 
 	async	findAllByUsername(username: string): Promise<User[]> {
@@ -80,12 +80,6 @@ export class UserService {
 			},
 		})
 		return user;
-		
-		// return this.userRepository.find({
-		// 	where: {
-		// 		username: Like(`%${username.toLowerCase()}%`)	//lowercased, so it corresponds to how they are stored.
-		// 	}
-		// })
 	}
 
 	private async hashPassword(password: string): Promise<string> {
@@ -99,7 +93,7 @@ export class UserService {
 	private async findOne(id: number): Promise<User> {
 		const user = await this.prisma.user.findUnique({
 			where: {
-			  id: 1,
+			  id: id,
 			},
 		  })
 		return user;
@@ -119,7 +113,6 @@ export class UserService {
 			}
 		  })
 		return user;
-		// return (this.userRepository.findOne( {email}, {select: ['id', 'email', 'username', 'password']} ));
 	}
 
 	public getOne(id: number): Promise<User> {
@@ -129,7 +122,6 @@ export class UserService {
 			},
 		})
 		return user;
-		// return this.userRepository.findOneOrFail({ id });
 	}
 
 	/* TODO: prevent user creation process when the username(unique) already exists, right now we only check the email 
